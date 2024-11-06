@@ -1,0 +1,26 @@
+services:
+  promotionsmicroservice:
+    image: ${DOCKER_REGISTRY-}promotionsmicroservice
+    build:
+      context: .
+      dockerfile: PromotionsMicroservice/Dockerfile
+    ports:
+      - 53360:8080
+
+  reviewmicroservice:
+    image: ${DOCKER_REGISTRY-}reviewmicroservice
+    build:
+      context: .
+      dockerfile: ReviewMicroservice/Dockerfile
+    ports:
+      - 53361:8080
+
+
+  shippingmicroservice:
+    image: ${DOCKER_REGISTRY-}shippingmicroservice
+    build:
+      context: .
+      dockerfile: ShippingMicroservice/Dockerfile
+    ports:
+      - 53362:8080
+

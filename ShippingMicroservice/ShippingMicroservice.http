@@ -1,0 +1,6 @@
+@ShippingMicroservice_HostAddress = http://localhost:5222
+
+GET {{ShippingMicroservice_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
