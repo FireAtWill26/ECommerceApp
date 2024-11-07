@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using OrderMicroservice.ApplicationCore.Contracts.Repositories;
+using OrderMicroservice.ApplicationCore.Contracts.Services;
 using OrderMicroservice.Infrastructure.Data;
+using OrderMicroservice.Infrastructure.Repositories;
+using OrderMicroservice.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +14,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ECommerceDbContext>(option => {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
+//builder.Services.AddDbContext<ECommerceDbContext>(option => {
+//    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
+//});
+
+builder.Services.AddDbContext<ECommerceDbContext>(option =>
+{
+    option.UseSqlServer(Environment.GetEnvironmentVariable("OrderConnectionDb"));
 });
+
+
+
+//Dependency Injection for repositories
+builder.Services.AddScoped<ICustomerRepositoryAsync, CustomerRepositoryAsync>();
+builder.Services.AddScoped<IOrderRepositoryAsync, OrderRepositoryAsync>();
+builder.Services.AddScoped<IPaymentRepositoryAsync, PaymentRepositoryAsync>();
+builder.Services.AddScoped<IShoppingCartRepositoryAsync, ShoppingCartRepositoryAsync>();
+builder.Services.AddScoped<IShoppingCartItemRepositoryAsync, ShoppingCartItemRepositoryAsync>();
+
+//Dependency Injection for services
+builder.Services.AddScoped<ICustomerServiceAsync, CustomerServiceAsync>();
+builder.Services.AddScoped<IOrderServiceAsync, OrderServiceAsync>();
+builder.Services.AddScoped<IPaymentServiceAsync, PaymentServiceAsync>();
+builder.Services.AddScoped<IShoppingCartServiceAsync, ShoppingCartServiceAsync>();
+builder.Services.AddScoped<IShoppingCartItemServiceAsync, ShoppingCartItemServiceAsync>();
+
+
+
 
 builder.Services.AddAutoMapper(typeof(Program));
 

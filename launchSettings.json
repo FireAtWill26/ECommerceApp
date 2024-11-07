@@ -6,7 +6,9 @@
       "serviceActions": {
         "promotionsmicroservice": "StartDebugging",
         "reviewmicroservice": "StartDebugging",
-        "shippingmicroservice": "StartDebugging"
+        "shippingmicroservice": "StartDebugging",
+        "ordermicroservice": "StartDebugging",
+        "productmicroservice": "StartDebugging"
       }
     }
   }

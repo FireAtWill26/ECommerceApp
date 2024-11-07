@@ -1,16 +1,18 @@
 ﻿
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OrderMicroservice.ApplicationCore.Contracts.Repositories;
 using OrderMicroservice.ApplicationCore.Contracts.Services;
+using OrderMicroservice.ApplicationCore.Entities.OrderHistory;
 using OrderMicroservice.ApplicationCore.Model.Request;
 using OrderMicroservice.ApplicationCore.Model.Response;
 using RabbitMqHelper;
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace OrderAPI.Controllers
+namespace OrderMicroservice.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -19,11 +21,13 @@ namespace OrderAPI.Controllers
 
         private IOrderServiceAsync orderServiceAsync;
         private readonly MessageQueue messageQueue;
+        private readonly IMapper mapper;
 
-        public OrderController(IOrderServiceAsync orderServiceAsync)
+        public OrderController(IOrderServiceAsync orderServiceAsync, IMapper mapper)
         {
             this.orderServiceAsync = orderServiceAsync;
-            messageQueue = new MessageQueue("amqp://guest:guest@host.docker.internal:5672", "Order Microservice"); 
+            messageQueue = new MessageQueue("amqp://guest:guest@host.docker.internal:5672", "Order Microservice");
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -33,7 +37,7 @@ namespace OrderAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveNewOrder(OrderRequestModel orderRequestModel)
+        public async Task<IActionResult> SaveOrder(OrderRequestModel orderRequestModel)
         {
             return Ok(await orderServiceAsync.InsertOrder(orderRequestModel));
         }
@@ -42,6 +46,12 @@ namespace OrderAPI.Controllers
         public async Task<IActionResult> GetByCustomerId(int customerId)
         {
             return Ok(await orderServiceAsync.GetOrderByCustomerId(customerId));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckOrderStatus(int id)
+        {
+            return Ok((await orderServiceAsync.GetOrderById(id)).Order_Status);
         }
 
         [HttpDelete]
@@ -54,11 +64,34 @@ namespace OrderAPI.Controllers
             return NotFound();
         }
 
-        [HttpPatch]
+
+        [HttpPut]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            var model = await orderServiceAsync.GetOrderById(id);
+            model.Order_Status = "Cancelled";
+            var order = mapper.Map<Order>(model);
+            var result = mapper.Map<OrderRequestModel>(order);
+            return Ok(orderServiceAsync.UpdateOrder(result, id));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> OrderCompleted(int id)
+        {
+            var model = await orderServiceAsync.GetOrderById(id);
+            model.Order_Status = "Completed";
+            var order = mapper.Map<Order>(model);
+            var result = mapper.Map<OrderRequestModel>(order);
+            return Ok(orderServiceAsync.UpdateOrder(result, id));
+        }
+
+        [HttpPut]
         public async Task<IActionResult> UpdateOrder(OrderRequestModel orderRequestModel, int id)
         {
             return Ok(orderServiceAsync.UpdateOrder(orderRequestModel, id));
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Post(OrderResponseModel model)

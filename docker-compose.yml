@@ -24,3 +24,21 @@ services:
     ports:
       - 53362:8080
 
+
+  ordermicroservice:
+    image: ${DOCKER_REGISTRY-}ordermicroservice
+    build:
+      context: .
+      dockerfile: OrderMicroservice/Dockerfile
+    ports:
+      - 53358:8080
+
+
+  productmicroservice:
+    image: ${DOCKER_REGISTRY-}productmicroservice
+    build:
+      context: .
+      dockerfile: ProductMicroservice/Dockerfile
+    ports:
+      - 53359:8080
+

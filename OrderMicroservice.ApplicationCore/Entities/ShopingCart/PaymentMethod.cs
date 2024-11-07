@@ -25,7 +25,7 @@ namespace OrderMicroservice.ApplicationCore.Entities.ShopingCart
         public PaymentType PaymentType { get; set; }
 
         [Column("Customer_ID")]
-        public int CustomerID { get; set; }
+        public int CustomerId { get; set; }
 
     }
 }
