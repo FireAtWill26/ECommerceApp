@@ -3,7 +3,7 @@
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
-WORKDIR /app
+WORKDIR /app 
 ENV OrderConnectionDb="Data Source=host.docker.internal,1433;Initial Catalog=ECommerceDb;Persist Security Info=True;User ID=SA;Password=Ilovechang_920520;Trust Server Certificate=True"
 EXPOSE 8080
 

@@ -32,5 +32,7 @@ namespace ShippingMicroservice.Infrastructure.Data
         public DbSet<Shipper> Shipper { get; set; }
 
         public DbSet<Region> Region { get; set; }
+
+        public DbSet<ShippingDetail> Shipping_Details { get; set; }
     }
 }

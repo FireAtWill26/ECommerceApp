@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OrderMicroservice.ApplicationCore.Contracts.Repositories;
 using OrderMicroservice.ApplicationCore.Contracts.Services;
 using OrderMicroservice.Infrastructure.Data;
@@ -14,13 +15,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddDbContext<ECommerceDbContext>(option => {
+//builder.Services.AddDbContext<ECommerceDbContext>(option =>
+//{
 //    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
 //});
 
 builder.Services.AddDbContext<ECommerceDbContext>(option =>
 {
     option.UseSqlServer(Environment.GetEnvironmentVariable("OrderConnectionDb"));
+    //option.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
 

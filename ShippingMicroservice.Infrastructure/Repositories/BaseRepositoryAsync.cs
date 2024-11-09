@@ -44,6 +44,7 @@ namespace ShippingMicroservice.Infrastructure.Repositories
 
         public async Task<int> UpdateAsync(T entity)
         {
+            context.ChangeTracker.Clear();
             context.Set<T>().Entry(entity).State = EntityState.Modified;
             return await context.SaveChangesAsync();
         }

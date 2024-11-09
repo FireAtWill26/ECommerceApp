@@ -23,5 +23,7 @@ namespace ShippingMicroservice.ApplicationCore.Entities
         public string contactPerson { get; set; }
 
         public List<Shipper_Region> Shipper_Regions { get; set; }
+
+        public List<ShippingDetail> ShippingDetails { get; set; }
     }
 }

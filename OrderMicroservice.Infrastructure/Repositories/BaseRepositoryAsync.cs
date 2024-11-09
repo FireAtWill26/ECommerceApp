@@ -32,7 +32,6 @@ namespace OrderMicroservice.Infrastructure.Repositories
         public async Task<T> GetByIdAsync(int id)
         {
             return await context.Set<T>().FindAsync(id);
-
         }
 
         public async Task<int> InsertAsync(T entity)
@@ -43,6 +42,7 @@ namespace OrderMicroservice.Infrastructure.Repositories
 
         public async Task<int> UpdateAsync(T entity)
         {
+            context.ChangeTracker.Clear();
             context.Set<T>().Entry(entity).State = EntityState.Modified;
             return await context.SaveChangesAsync();
         }

@@ -49,6 +49,13 @@ namespace OrderMicroservice.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            return Ok(await orderServiceAsync.GetOrderById(id));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> CheckOrderStatus(int id)
         {
             return Ok((await orderServiceAsync.GetOrderById(id)).Order_Status);
@@ -75,20 +82,26 @@ namespace OrderMicroservice.Controllers
             return Ok(orderServiceAsync.UpdateOrder(result, id));
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> OrderCompleted(int id)
         {
+            //HttpClient client = new HttpClient();
+            //client.BaseAddress = new Uri("https://host.docker.internal:53358/api/");
+            //var model = await (await client.GetAsync($"Order/GetById/{id}")).
+            //    Content.ReadFromJsonAsync<OrderRequestModel>();
             var model = await orderServiceAsync.GetOrderById(id);
             model.Order_Status = "Completed";
             var order = mapper.Map<Order>(model);
             var result = mapper.Map<OrderRequestModel>(order);
-            return Ok(orderServiceAsync.UpdateOrder(result, id));
+            var str = JsonConvert.SerializeObject(model);
+            await messageQueue.AddMessageToQueue(str, "OrderExchange", "OrderQueue", "custom-routing-key");
+            return Ok(await orderServiceAsync.UpdateOrder(result, id));
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateOrder(OrderRequestModel orderRequestModel, int id)
         {
-            return Ok(orderServiceAsync.UpdateOrder(orderRequestModel, id));
+            return Ok(await orderServiceAsync.UpdateOrder(orderRequestModel, id));
         }
 
 
@@ -99,6 +112,13 @@ namespace OrderMicroservice.Controllers
             var str = JsonConvert.SerializeObject(model);
             await messageQueue.AddMessageToQueue(str, "OrderExchange", "OrderQueue", "custom-routing-key");
             return Ok("Message has been added to the queue.");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFromQueue()
+        {
+            var result = await messageQueue.ReadMessageFromQueue("OrderExchange", "OrderQueue", "custom-routing-key");
+            return Ok(result); 
         }
     }
 }

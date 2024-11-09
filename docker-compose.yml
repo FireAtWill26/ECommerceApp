@@ -42,3 +42,12 @@ services:
     ports:
       - 53359:8080
 
+
+  authenticationmicroservice:
+    image: ${DOCKER_REGISTRY-}authenticationmicroservice
+    build:
+      context: .
+      dockerfile: AuthenticationMicroservice/Dockerfile
+    ports:
+      - 53357:8080
+

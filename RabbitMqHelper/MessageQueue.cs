@@ -39,7 +39,8 @@ namespace RabbitMqHelper
             await channel.QueueBindAsync(queueName, exchangeName, routingKey);
             //await channel.BasicQosAsync(0,1,false);
             //var consumer = new AsyncEventingBasicConsumer(channel);
-            var result = await channel.BasicGetAsync(queueName, false);
+            var result = await channel.BasicGetAsync(queueName, true);
+
             await channel.CloseAsync();
             await con.CloseAsync();
             channel.Dispose();

@@ -39,7 +39,7 @@ namespace OrderMicroservice.Infrastructure.Repositories
             UserAddress userAddress = new UserAddress 
             {
                 Customer_Id = customerId,
-                Address_Id = address.Id,
+                Address_Id = (await context.Address.MaxAsync(x => x.Id)) + 1,
                 IsDefaultAddress = false
             };
             await context.Set<Address>().AddAsync(address);
