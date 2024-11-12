@@ -35,7 +35,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          dockerfilePath: ShippinngMicroservice/Dockerfile
+          dockerfilePath: ShippingMicroservice/Dockerfile
           # _dockerfilePathKey_: _dockerfilePath_
           registryUrl: containerregistryecommerce.azurecr.io
           registryUsername: ${{ secrets.SHIPPINGMICROSERVICE_REGISTRY_USERNAME }}
