@@ -22,9 +22,11 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 //    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
 //});
 
+var ConnectionStrinng = Environment.GetEnvironmentVariable("AuthenticationConnectionDb");
+
 builder.Services.AddDbContext<AuthenticationDbContext>(option =>
 {
-    option.UseSqlServer(Environment.GetEnvironmentVariable("AuthenticationConnectionDb"));
+    option.UseSqlServer(ConnectionStrinng);
 });
 
 
