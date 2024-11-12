@@ -1,0 +1,48 @@
+name: Trigger auto deployment for review-microservice
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/review-microservice-AutoDeployTrigger-9708a691-7de4-41e3-ac76-5f982136a581.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.REVIEWMICROSERVICE_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.REVIEWMICROSERVICE_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.REVIEWMICROSERVICE_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}"./ReviewMicroservice/Dockerfile"
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: containerregistryecommerce.azurecr.io
+          registryUsername: ${{ secrets.REVIEWMICROSERVICE_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.REVIEWMICROSERVICE_REGISTRY_PASSWORD }}
+          containerAppName: review-microservice
+          resourceGroup: MovieShoprg
+          imageToBuild: containerregistryecommerce.azurecr.io/review-microservice:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
