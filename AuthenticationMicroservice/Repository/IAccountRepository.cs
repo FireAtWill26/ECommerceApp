@@ -7,8 +7,16 @@ namespace AuthenticationMicroservice.Repository
     {
         Task<IdentityResult> SignUpAsync(SignUpModel model);
 
+        Task<IdentityResult> SignUpAsyncAdmin(SignUpModel model);
+
         Task<SignInResult> SignInAsync(SignInModel model);
 
+        Task<IEnumerable<ApplicationUser>> GetAllUsers();
 
+        Task<ApplicationUser> GetUser(string userId);
+
+        Task<IdentityResult> Delete(string userId);
+
+        Task<IdentityResult> Update(UpdateUser user);
     }
 }

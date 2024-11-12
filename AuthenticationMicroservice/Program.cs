@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<JwtTokenHandler>();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 //builder.Services.AddDbContext<AuthenticationDbContext>(option =>
 //{

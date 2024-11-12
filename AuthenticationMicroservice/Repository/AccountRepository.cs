@@ -1,4 +1,5 @@
 ﻿using AuthenticationMicroservice.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +9,14 @@ namespace AuthenticationMicroservice.Repository
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountRepository(UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         public async Task<IdentityResult> SignUpAsync(SignUpModel model)
@@ -22,8 +26,23 @@ namespace AuthenticationMicroservice.Repository
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
-                UserName = model.Email
+                UserName = model.Email,
+                Role = "User"
             };
+            return await _userManager.CreateAsync(user, model.Password);
+        }
+
+        public async Task<IdentityResult> SignUpAsyncAdmin(SignUpModel model)
+        {
+            var user = new ApplicationUser
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                UserName = model.Email,
+                Role = "Admin"
+            };
+            var a = new IdentityUser();
             return await _userManager.CreateAsync(user, model.Password);
         }
 
@@ -52,9 +71,10 @@ namespace AuthenticationMicroservice.Repository
             return IdentityResult.Failed();
         }
 
-        public async Task<IdentityResult> Delete(ApplicationUser user)
+        public async Task<IdentityResult> Update(UpdateUser user)
         {
-            return await _userManager.UpdateAsync(user);
+            var res = _mapper.Map<ApplicationUser>(user);
+            return await _userManager.UpdateAsync(res);
         }
     }
 }
