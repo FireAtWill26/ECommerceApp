@@ -4,7 +4,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app 
-ENV OrderConnectionDb="Server=tcp:yb-movieshop.database.windows.net,1433;Initial Catalog=ECommerceDb;Persist Security Info=False;User ID=YuzheBai;Password=Ilovechang26;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+ENV OrderConnectionDb="Server=tcp:yb-movieshop.database.windows.net,1433;Initial Catalog=ECommerceDb;Persist Security Info=False;User ID=YuzheBai;Password=Ilovechang26;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30"
 
 #ENV OrderConnectionDb="Data Source=host.docker.internal,1433;Initial Catalog=ECommerceDb;Persist Security Info=True;User ID=SA;Password=Ilovechang_920520;Trust Server Certificate=True"
 EXPOSE 8080
