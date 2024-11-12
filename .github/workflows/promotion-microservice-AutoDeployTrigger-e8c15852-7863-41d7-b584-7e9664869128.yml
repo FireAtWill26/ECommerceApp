@@ -1,0 +1,48 @@
+name: Trigger auto deployment for promotion-microservice
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/promotion-microservice-AutoDeployTrigger-e8c15852-7863-41d7-b584-7e9664869128.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.PROMOTIONMICROSERVICE_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.PROMOTIONMICROSERVICE_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.PROMOTIONMICROSERVICE_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}"./PromotionMicroservice/Dockerfile"
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: containerregistryecommerce.azurecr.io
+          registryUsername: ${{ secrets.PROMOTIONMICROSERVICE_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.PROMOTIONMICROSERVICE_REGISTRY_PASSWORD }}
+          containerAppName: promotion-microservice
+          resourceGroup: MovieShoprg
+          imageToBuild: containerregistryecommerce.azurecr.io/promotion-microservice:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
