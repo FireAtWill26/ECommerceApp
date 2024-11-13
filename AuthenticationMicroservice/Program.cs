@@ -18,17 +18,17 @@ builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddDbContext<AuthenticationDbContext>(option =>
-{
-    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
-});
+//builder.Services.AddDbContext<AuthenticationDbContext>(option =>
+//{
+//    option.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"));
+//});
 
 var ConnectionString = Environment.GetEnvironmentVariable("AuthenticationConnectionDb");
 
-//builder.Services.AddDbContext<AuthenticationDbContext>(option =>
-//{
-//    option.UseSqlServer(ConnectionString);
-//});
+builder.Services.AddDbContext<AuthenticationDbContext>(option =>
+{
+    option.UseSqlServer(ConnectionString);
+});
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
