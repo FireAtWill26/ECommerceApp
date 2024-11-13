@@ -9,14 +9,17 @@ namespace AuthenticationMicroservice.Repository
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
 
         public AccountRepository(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager, IMapper mapper)
+            SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager,
+            IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
         public async Task<IdentityResult> SignUpAsync(SignUpModel model)
@@ -27,9 +30,14 @@ namespace AuthenticationMicroservice.Repository
                 LastName = model.LastName,
                 Email = model.Email,
                 UserName = model.Email,
-                Role = "User"
             };
-            return await _userManager.CreateAsync(user, model.Password);
+            var AdminExist = await _roleManager.RoleExistsAsync("Customer");
+            if (!AdminExist)
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Customer"));
+            }
+            await _userManager.CreateAsync(user, model.Password);
+            return await _userManager.AddToRoleAsync(user, "Customer");
         }
 
         public async Task<IdentityResult> SignUpAsyncAdmin(SignUpModel model)
@@ -40,10 +48,14 @@ namespace AuthenticationMicroservice.Repository
                 LastName = model.LastName,
                 Email = model.Email,
                 UserName = model.Email,
-                Role = "Admin"
             };
-            var a = new IdentityUser();
-            return await _userManager.CreateAsync(user, model.Password);
+            var AdminExist = await _roleManager.RoleExistsAsync("Admin");
+            if (!AdminExist) 
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+            await _userManager.CreateAsync(user, model.Password);
+            return await _userManager.AddToRoleAsync(user, "Admin");
         }
 
         public async Task<SignInResult> SignInAsync(SignInModel model)

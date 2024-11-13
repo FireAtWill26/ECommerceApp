@@ -54,7 +54,7 @@ namespace AuthenticationMicroservice.Controllers
         [Route("customer-regsister")]
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
-            var result = await accountRepository.SignUpAsync(model);
+            var result = await accountRepository.SignUpAsyncAdmin(model);
             if (result.Succeeded)
             {
                 return Ok(result.Succeeded);
@@ -63,7 +63,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpPost]
-        [Route("regsister-admin")]
+        [Route("register-admin")]
         public async Task<IActionResult> SignUpAdmin(SignUpModel model)
         {
             var result = await accountRepository.SignUpAsync(model);

@@ -21,11 +21,11 @@ builder.Services.AddSwaggerGen();
 //});
 
 
-var ConnectionStrinng = Environment.GetEnvironmentVariable("OrderConnectionDb");
+var ConnectionString = Environment.GetEnvironmentVariable("OrderConnectionDb");
 
 builder.Services.AddDbContext<ECommerceDbContext>(option =>
 {
-    option.UseSqlServer(ConnectionStrinng);
+    option.UseSqlServer(ConnectionString);
     //option.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
